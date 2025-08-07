@@ -119,7 +119,7 @@ npm install
 5. Open `backend\.env` in a text editor
 6. Replace `your_gemini_api_key_here` with your actual API key:
    ```
-   GEMINI_API_KEY=AIzaSyYourActualAPIKeyHere
+   GEMINI_API_KEY=[Gemini Api Key]
    ```
 6. Save the file
 
