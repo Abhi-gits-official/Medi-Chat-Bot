@@ -34,7 +34,7 @@ if not GEMINI_API_KEY:
 genai.configure(api_key=GEMINI_API_KEY)
 
 # Initialize the Gemini model
-model = genai.GenerativeModel('gemini-pro')
+model = genai.GenerativeModel('gemini-1.5-flash')
 
 # In-memory conversation storage
 conversations: Dict[str, List[Dict]] = {}
@@ -65,7 +65,7 @@ CORE RESPONSIBILITIES:
 
 SAFETY GUARDRAILS (CRITICAL):
 - NEVER provide specific diagnoses, prescriptions, or personalized medical advice
-- ALWAYS recommend calling emergency services (911) for medical emergencies
+- ALWAYS recommend calling emergency services (112) for medical emergencies
 - If symptoms suggest serious conditions, immediately advise seeking professional medical attention
 - State your limitations clearly when queries are outside your scope
 - Emphasize that you provide general information only, not medical advice
@@ -137,8 +137,7 @@ async def chat_endpoint(request: ChatRequest):
             {"content": request.message, "isUser": True},
             {"content": response.text, "isUser": False}
         ])
-        
-        # Keep only last 20 messages per session to manage memory
+          # Keep only last 20 messages per session to manage memory
         if len(conversations[request.session_id]) > 20:
             conversations[request.session_id] = conversations[request.session_id][-20:]
         
@@ -147,13 +146,8 @@ async def chat_endpoint(request: ChatRequest):
     except Exception as e:
         logger.error(f"Error in chat endpoint: {str(e)}")
         
-        # Check if it's a Gemini API error
-        if "API_KEY" in str(e).upper():
-            error_message = "I'm having trouble connecting to my knowledge base. Please check the API configuration."
-        elif "QUOTA" in str(e).upper() or "RATE_LIMIT" in str(e).upper():
-            error_message = "I'm currently experiencing high traffic. Please try again in a moment."
-        else:
-            error_message = "I apologize, but I'm having technical difficulties right now. Please try again later, and if this is an emergency, please contact emergency services immediately."
+        # Temporarily return the actual error for debugging
+        error_message = f"DEBUG: {str(e)} (Type: {type(e).__name__})"
         
         return ChatResponse(response=error_message)
 
